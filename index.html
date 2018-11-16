@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Kubrick Words</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <!-- <script type="text/javascript" src="assets/javascript/game.js"></script> -->
+
+</head>
+
+<!-- This website presents a Stanley Kubrick word guess game to the player in the style of Hangman & tracks wins and losses. -->
+
+<!-- Play theme music upon website launch. -->
+<iframe src="assets/images/silence.mp3" allow="autoplay" id="audio" style="display:none"></iframe>
+
+<audio autoplay>
+    <source src="assets/images/2001-theme.mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+    </audio>
+
+<body class="bg-dark text-secondary">
+    
+    <div class="full-width bg-dark">
+        <div class="container p-0">
+            <nav class="navbar navbar-expand-md bg-dark navbar-dark mb-3 p-0">
+                <h3 class="mb-0 p-3 text-warning">Welcome to Kubrick Word Guess</h3>
+                
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse justify-content-end" id="collapsibleNavbar">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                        <a class="nav-link" href="https://www.imdb.com/list/ls025720609/videoplayer/vi1011595289?ref_=nm_vd_sk_dt_i_1">Films</a>
+                        </li>
+                        <li class="nav-item">
+                        <a class="nav-link" href="https://theunredacted.com/kubrick-apollo-conspiracy-under-a-shining-moon/">Conspiracy</a>
+                        </li>
+                        <li class="nav-item">
+                        <a class="nav-link" href="http://www.derektaylorkent.com/kubricksgame/">The Real Game</a>
+                        </li> 
+                    </ul>
+                </div> 
+            </nav>
+        </div>
+    </div>
+
+    <!-- Theme slideshow of movie images. -->
+    <div class="container bg-dark" id="maincontainer">
+        <div class="row" id="movieslides">
+            <div class="col-sm-6 p-0">
+                <div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel" data-interval="15000">
+                    <div class="carousel-inner">
+                      <div class="carousel-item active data">
+                        <img class="d-block w-100 img-responsive" src="assets/images/2001-planet.jpg" alt="The Shining">
+                    </div>
+                      <div class="carousel-item">
+                        <img class="d-block w-100 img-responsive" src="assets/images/shining-1.jpg" alt="2001">
+                      </div>
+                      <div class="carousel-item">
+                        <img class="d-block w-100 img-responsive" src="assets/images/clockwork-1.jpg" alt="A Clockwork Orange">
+                      </div>
+                      <div class="carousel-item">
+                        <img class="d-block w-100 img-responsive" src="assets/images/shining-2.jpg" alt="The Shining">
+                      </div>
+                      <div class="carousel-item">
+                        <img class="d-block w-100 img-responsive" src="assets/images/2001-1.jpg" alt="2001">
+                      </div>
+                      <div class="carousel-item">
+                        <img class="d-block w-100 img-responsive" src="assets/images/clockwork-2.jpg" alt="A Clockwork Orange">
+                      </div>
+                      <div class="carousel-item">
+                        <img class="d-block w-100 img-responsive" src="assets/images/shining-3.jpg" alt="The Shining">
+                      </div>
+                      <div class="carousel-item">
+                        <img class="d-block w-100 img-responsive" src="assets/images/2001-3.jpg" alt="2001">
+                      </div>
+                      <div class="carousel-item">
+                        <img class="d-block w-100 img-responsive" src="assets/images/clockwork-3.jpg" alt="A Clockwork Orange">
+                      </div>
+                      <div class="carousel-item">
+                            <img class="d-block w-100 img-responsive" src="assets/images/2001-2.jpg" alt="A Clockwork Orange">
+                          </div>
+                    </div>
+                  </div>
+            </div>
+
+            <!-- Placeholders to print output from Javascript functions to the HTML page. -->
+            <div class="col-sm-5">
+                <h3 id="directions-text">Press any key to get started!</h3>
+                <p><h2 class="text-danger" id="wordchoice-text"></h2></p>
+                <p><h5 id="guesses-text"></h5></p>
+                <p><h5 id="guesseslist-text"></h5></p> 
+                <p><h5 id="wins-text"></h5></p>
+                <p><h5 id="losses-text"></h5></p>
+                <p></p>
+                
+            </div>
+
+            <div class="col-sm-1 bg-danger text-dark p-1">
+                <h5 id="newmessage-text"></h5>
+            </div>
+
+        </div>
+
+        <script type="text/javascript">
+
+         // Create arrays that list word dictionary and user choices for valid keys.
+            var wordChoices = ["SPARTACUS", "SHINING", "CLOCKWORK", "DROOGIE", "HORRORSHOW", "MONOLITH", "OVERLOOK", "REDRUM"];
+            var userChoices = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W" , "X", "Y", "Z"]
+        
+         // Define all the required variables for functions
+            var wins = 0;
+            var losses = 0;
+            var guesses = 10;
+            var chosenWord;
+            var guessesList = [];
+            var wordArray;
+            var underscoresArray = [];
+            var userChoice;
+            var startGame = false;
+            var underscoreString;
+            var validKey = false;
+        
+         // Create variables that hold references to the places in the HTML where we want to display output
+            var directionsText = document.getElementById("directions-text");
+            var wordChoiceText = document.getElementById("wordchoice-text");
+            var guessesText = document.getElementById("guesses-text");
+            var guessesListText = document.getElementById("guesseslist-text");
+            var userChoiceText = document.getElementById("userchoice-text");
+            var winsText = document.getElementById("wins-text");
+            var lossesText = document.getElementById("losses-text");
+            var newMessageText = document.getElementById("newmessage-text");
+
+         //Functions to be used for playing the game
+
+            // Starts a new game and resets variablesjh
+            function newGame() {
+                startGame = true;
+                validkey = false;
+                guessesList = [];
+                guesses = 10;
+                chosenWord = wordChoices[(Math.floor(Math.random() * wordChoices.length))];
+                underscoreString = chosenWord.replace(/.{1}/g, "_ ");
+                wordArray = chosenWord.split('');
+                underscoresArray = underscoreString.split('');
+                wordChoiceText.textContent = underscoresArray;
+                guessesText.textContent = guesses;
+                
+            }
+            
+            //Compares the current letter choice to the hidden word for matches and reveals them visually
+            function revealMatch(userChoice) {
+                console.log(userChoice);
+                console.log(wordArray[0]);
+                for (i = 0; i < chosenWord.length; i++) {
+                    if (userChoice == wordArray[i]) {
+                        underscoresArray[i * 2] = userChoice;
+                        console.log(underscoresArray);
+                    }   
+                }
+                wordChoiceText.textContent = underscoresArray.join("");
+            }
+            
+            //Did the user press a valid key (upper or lower case letter)
+            function keyCheck(userChoice) {  
+                if (userChoices.indexOf(userChoice) != -1) {
+                    validKey = true;
+                }
+
+            }
+
+
+
+
+            // This primary function is run whenever the user presses a key
+            document.onkeypress = function(event) {
+                if (startGame == false) {    
+                directionsText.textContent = ""; //hide the instructions upon first key press
+                newGame();
+                }
+
+                else {
+                    userChoice = (event.key);
+                    userChoice = userChoice.toUpperCase();
+                    revealMatch(userChoice);
+                    if (underscoresArray.indexOf("_") === -1) {
+                    console.log(underscoresArray);
+                    wins++;
+                    newMessageText.textContent = "You must have cheated. Well done.";
+                    newGame(event.key);
+                    }
+                else {
+                    userChoice = (event.key)
+                    userChoice = userChoice.toUpperCase();
+                    keyCheck(userChoice);
+                    revealMatch(userChoice);
+                    if ((guessesList.indexOf(userChoice) === -1) && (validKey == true)) {
+                    guesses--;
+                    guessesList.push(userChoice);
+                    }
+                    if (guesses == 0) {
+                        newMessageText.textContent = "This farce is over loser. You've been reset.";
+                        newGame();
+                        losses++
+                    }
+                }
+                }
+                
+                
+ 
+
+                // Display the user and computer guesses, and wins/losses/ties.
+                wordChoiceText.textContent = underscoresArray.join(" ");
+                guessesText.textContent = "Choose wisely: " + guesses;
+                guessesListText.textContent = "Your past mistakes: " + guessesList.join(" "); 
+                winsText.textContent = "# of times you cheated: " + wins;
+                lossesText.textContent = "Pathetic losses: " + losses;
+                // }
+
+            };
+
+        </script>
+
+    </div>
+
+    <div class="clearfix"></div>
+    
+    <footer class="page-footer">
+        <section id="moviequotes">
+                    <div class="container mt-5 p-0">
+                        <marquee><h4 class="display-5 text-warning">
+                            I'm Sorry Dave.  I'm afraid I can't do that.
+                            All work and no play makes Jack a dull boy.
+                            You're so ugly you could be a modern art masterpiece!
+                            The Korova Milkbar sold milk plus, milk plus vellocet or sythemesc or drencom, which is what we were drinking.
+                            The 9000 series have a perfect operational record.
+                            Here's Johnny!
+                            What is your major malfunction?
+                            I'm cured!  Praise god!
+                        </h4></marquee>
+                    </div>
+        </section>
+    </footer>
+      
+
+</body>
+</html>
