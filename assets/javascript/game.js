@@ -14,6 +14,8 @@ var userChoice;
 var startGame = false;
 var underscoreString;
 var validKey = false;
+console.log(validKey);
+console.log(wins);
 
 // Create variables that hold references to the places in the HTML where we want to display output
 var directionsText = document.getElementById("directions-text");
@@ -55,6 +57,9 @@ function revealMatch(userChoice) {
 function keyCheck(userChoice) {  
     if (userChoices.indexOf(userChoice) != -1) {
         validKey = true;
+    }    
+    else {
+        validKey = false;
     }
 }
 
@@ -69,7 +74,6 @@ document.onkeypress = function(event) {
         userChoice = userChoice.toUpperCase();
         revealMatch(userChoice);
         if (underscoresArray.indexOf("_") === -1) {
-        console.log(underscoresArray);
         wins++;
         newMessageText.textContent = "You must have cheated. Well done.";
         newGame(event.key);
